@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posicionamiento</title>
+</head>
+<style>
+    .caja {
+        border: 2px solid blue;
+        width: 300px;
+        height: 300px;
+        background-color: aqua;
+    }
+
+    #caja2 {
+        background-color: red;
+        position: relative;
+        left: 100px;
+    }
+
+    #caja3 {
+        background-color: gray;
+        position: relative;
+    }
+
+    #caja4 {
+        background-color: yellow;
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        top: 30px;
+        left: 30px;
+    }
+
+    #caja5 {
+        position: fixed;
+        top: 150px;
+        right: 150px;
+        background-color: gold;
+    }
+
+    #caja6,#caja7 {
+        background-color: green;
+    }
+</style>
+<body>
+    <div id="caja1" class="caja">Position Static</div>
+    <div id="caja2" class="caja">Position Relative</div>
+    <div id="caja3" class="caja">
+        Position Relative
+        <div id="caja4" class="caja">Position Absolute</div>
+    </div>
+    <div id="caja5" class="caja">Position Fixed</div>
+    <div id="caja6" class="caja"></div>
+    <div id="caja7" class="caja"></div>
+</body>
+</html>
