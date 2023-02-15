@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.contenedor {
+    width: 100%;
+}
+
+.caja {
+    border: 2px solid blue;
+    background-color: aqua;
+    height: 100px;
+    width: 100px;
+    margin: 2px;
+    width:calc((100% / 6) - 4px);
+    float: left;
+    text-align: center;
+}
+
+@media screen and (max-width: 800px) and (min-width: 400px){
+    #caja4{
+        clear: left;
+    }
+    .caja {
+        width:calc((100% / 3) - 4px);
+    }
+}
+
+@media screen and (max-width: 399px){
+    .caja{
+        clear: left;
+        width:calc(100% - 4px);
+    }
+}
+    </style>
+<body>
+    <div class="contenedor">
+        <div class="caja">Caja 1</div>
+        <div class="caja">Caja 2</div>
+        <div class="caja">Caja 3</div>
+        <div class="caja">Caja 4</div>
+        <div class="caja">Caja 5</div>
+        <div class="caja">Caja 6</div>
+    </div>
+</body>
+</html>
