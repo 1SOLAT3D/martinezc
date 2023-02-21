@@ -1,0 +1,32 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.contenido {
+    width: 100vw;
+    height: 100vh;
+    background-color: red;
+    display: grid;
+    grid-template-columns: 70% 30%;
+    grid-template-rows: 33% 34% 33%;
+    grid-template-areas: 'encabezado barralat'
+                         'contenido barralat'
+                         'piepagina barralat';
+    justify-content: start;
+    align-content: center;
+    justify-items: stretch;
+    align-items: stretch;
+}
+
+.caja{
+    background-color: aqua;
+    text-align: center;
+    border: 2px solid blue;
+}
+
+#encabezado {grid-area: encabezado;}
+#barralat {grid-area: barralat;}
+#contenido {grid-area: contenido;}
+#piepagina {grid-area: piepagina;}
