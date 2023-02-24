@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variables en CSS</title>
+    <style>
+        :root{
+            --texto-light:blue;
+            --fondo-light: white;
+
+            --texto-dark: white;
+            --fondo-dark: blue;
+        }
+
+        *{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body{
+            width: 100%;
+            height: 100%;
+        }
+
+        div#cont{
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 2em;
+            width: 70%;
+            margin: 0 auto;
+            height: 100%;
+            background-color: var(--fondo-light);
+            color: var(--texto-light);
+        }
+
+        h1{
+            text-align: center;
+            padding: 1em;
+        }
+
+        #cambiaTema:checked + div#cont{
+            background-color: var(--fondo-dark);
+            color: var(--texto-dark);
+        }
+
+    </style>
+</head>
+<body>
+    <input type="checkbox" id="cambiaTema">
+    <div id="cont">
+        <h1>Encabezado</h1>
+        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Architecto unde minus nostrum dolor magni velit numquam explicabo voluptate, omnis aliquam autem expedita temporibus fuga, incidunt quisquam hic non, quam odit alias eos! Ipsum sint repellendus, corrupti dolorum quae quo libero harum reprehenderit, quam commodi itaque repudiandae asperiores quis adipisci. Voluptatibus.</p>
+    </div>
+</body>
+</html>
