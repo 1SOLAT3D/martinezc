@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="LayoutGridEventos.css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="cont" class="contenido">
+        <div id="encabezado" onclick="alert('Click en Encabezado')" class="caja">Caja 1</div>
+        <div id="barralat" class="caja">Caja 2</div>
+        <div id="contenido" class="caja">Caja 3</div>
+        <div id="piepagina" class="caja">Caja 4</div>
+    </div>
+
+    <script>
+        window.onload= function(){
+        document.getElementById("barralat").onclick = function()
+        {alert ("Click en Barra Lateral")};
+
+        document.getElementById("contenido").addEventListener("click", clickContenido);
+        function clickContenido(){
+            alert("Click en Contenido");
+        }
+
+        document.getElementById("piepagina").addEventListener("click", function() {
+            alert("Click en Pie de pagina");
+        })
+    }
+    </script>
+</body>
+</html>
