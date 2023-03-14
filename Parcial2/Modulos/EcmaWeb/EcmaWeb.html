@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="module" src="./EcmaWeb.js"></script>
+</head>
+<body>
+    <form>
+        <label for="base">Base</label>
+        <input type="text" id="base">
+
+        <label for="altura">Altura</label>
+        <input type="text" id="altura">
+
+        <button id="boton">Calcular</button>
+
+        <div id="area"></div>
+    </form>
+    <script type="module">
+        import {areaTriangulo} from "./area.js"
+
+        document.getElementById("boton").addEventListener("click", function(e){
+
+        let vbase = document.getElementById('base').value;
+        let valt = document.getElementById('altura').value;
+
+        let varea = area.areaTriangulo(vbase, valt);
+        document.getElementById("area").innerText=varea;
+
+        e.preventDefault();
+        })
+    </script>
+</body>
+</html>
