@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>Peticiones HTTP</title>
+</head>
+<body>
+    <button id="XMLHttp">Boton XMLHttp</button>
+    <button id="btnAjax">Boton AJAX</button>
+    <button id="btnGET">Boton GET</button>
+    <button id="btnJSON">Boton JSON</button>
+    <button id="btnFetch">Boton Fetch</button>
+    <button id="btnAxios">Boton Axios</button>
+    <button id="btnAsyncAwait">Boton Async Await</button>
+    <div id="resultado">
+        <img src="" alt="" id="foto">
+    </div>
+    <script>
+
+        //Peticion por el Metodo XML
+
+        window.onload=function()
+        {
+            document.getElementById("XMLHttp").addEventListener("click",function()
+            {
+                console.log("Click en boton");
+                let solicitud = new XMLHttpRequest();
+                solicitud.responseType='json';
+                solicitud.onload = function()
+                {
+                    console.log(solicitud.response.message);
+                    document.getElementById("foto").src = solicitud.response.message;
+                }
+            solicitud.open("GET","https://dog.ceo/api/breeds/image/random", true);
+            solicitud.send();
+        })
+    }
+
+        // Peticion con JQuery y AJAX
+        
+        $(document).ready(function()
+        {           
+            $("#btnAjax").click(function()
+            {
+                $.ajax({
+                        url: "https://dog.ceo/api/breeds/image/random"
+                    })
+                .done(function(respuesta)
+                {   
+                    console.log("Click Ajax");                 
+                    console.log(respuesta);
+                    $("#foto").attr('src',respuesta.message);
+                });
+            })
+
+            //Peticion con JQuery por el Metodo GET
+
+            $("#btnGET").click(function()
+            {
+                $.get("https://dog.ceo/api/breeds/image/random", function(respuesta)
+                {
+                    console.log("Click GET");
+                    console.log(respuesta);
+                    $("#foto").attr('src',respuesta.message);
+                })
+            })
+
+        //Peticion por el Metodo JSON
+
+        $("#btnJSON").click(function()
+        {
+            $.getJSON("https://dog.ceo/api/breeds/image/random", function(respuesta)
+            {
+                console.log("Click en Boton JSON");
+                console.log(respuesta);                    
+                $("#foto").attr('src',respuesta.message);
+                })
+            })
+        })
+
+        // Peticion por Async-Await
+
+        document.getElementById("btnAsyncAwait").addEventListener("click", async function()
+        {
+            console.log("click en boton Async-Await");
+                const response = await fetch('https://dog.ceo/api/breeds/image/random');
+                const data = await response.json();
+                console.log(data.message);
+                document.getElementById("foto").src = data.message;
+            });
+
+        // Peticion por Metodo Fetch
+
+        document.getElementById("btnFetch").addEventListener("click", function()
+        {
+                fetch("https://dog.ceo/api/breeds/image/random")
+                .then(respuesta => respuesta.json() )
+                    .then(function (datojson){
+                        console.log("Click en FETCH");
+                        console.log(datojson.message);
+                        document.getElementById("foto").src = datojson.message;
+                    })
+            });
+
+        // Peticion por medio de la librería Axios
+
+        document.getElementById("btnAxios").addEventListener("click", function()
+        {
+            axios(
+                {
+                    method: 'get',
+                    url: 'https://dog.ceo/api/breeds/image/random'
+                })
+                .then(function (response)
+                {
+                    console.log("Click en Axios");
+                    console.log(response.data.message);
+                    document.getElementById("foto").src = response.data.message;
+                })
+            });
+    </script>
+</body>
+</html>
