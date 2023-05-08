@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peticiones HTTP</title>
+</head>
+<style>
+    #foto{
+        width: 450px;
+        height: 550px;
+    }
+</style>
+<body>
+    <select id="categorias"></select>
+    <button id="btnFetch">Peticion Fetch</button>
+    <div id="resultado"></div>
+
+    <script>
+        window.onload=function(){
+            fetch("https://api.chucknorris.io/jokes/categories")
+            .then(respuesta => respuesta.json() )
+                .then(function (datojson){ console.log(datojson);
+                        datojson.forEach(elemento => {
+                        console.log(elemento);
+                        
+                        let opcion = document.createElement('option');
+                        opcion.value = elemento;
+                        opcion.text = elemento;
+                        document.getElementById('categorias').appendChild(opcion);
+                    });
+                })
+            
+            document.getElementById("btnFetch").addEventListener("click", function(){
+                let categoriaSeleccionada = document.getElementById('categorias').value;
+                let direccionPeticion = "https://api.chucknorris.io/jokes/random?category=" + categoriaSeleccionada;
+
+                fetch(direccionPeticion)
+                .then(respuesta => respuesta.json() )
+                    .then(function (datojson){                        
+                        console.log(datojson.value);
+                        document.getElementById("resultado").innerText = datojson.value;
+                    })
+            });                
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <title>XMLHttpRequest</title>
+</head>
+<body>
+    <button id="XMLhttp">Boton XMLHttp</button>
+    <button id="btnAjax">Boton AJAX</button>
+    <button id="btnGET">Boton GET</button>
+    <button id="btnJson">Boton JSon</button>
+    <div id="resultado">
+        <img src="" alt="" id="foto">
+    </div>
+    <script>
+        window.onload=function(){
+            document.getElementById("XMLhttp").addEventListener("click",function(){
+                    console.log("Click en boton");
+                    let solicitud = new XMLHttpRequest();
+                    solicitud.responseType='json';
+                    solicitud.onload = function(){
+                    console.log(solicitud.response.message);
+                    document.getElementById("foto").src = solicitud.response.message;
+                 }
+                solicitud.open("GET","https://dog.ceo/api/breeds/image/random", true);
+                solicitud.send();
+            })
+        }
+
+        $(document).ready(function(){
+            $("#btnAjax").click(function(){
+                $.ajax({
+                url: "https://dog.ceo/api/breeds/image/random"
+                })
+                .done(function( respuesta) {   
+                    console.log("Click en boton");                 
+                    console.log(respuesta);
+                    $("#foto").text(respuesta.message);
+                });
+            })
+        })
+
+        $(document).ready(function(){
+            $("#btnJson").click(function(){
+                $.ajax({
+                url: "https://pokeapi.co/api/v2/pokemon/ditto"
+                })
+                .done(function( respuesta) {   
+                    console.log("Click en boton");                 
+                    console.log(respuesta);
+                    $("#resultado").innerText(respuesta.value);
+                });
+            })
+        })
+    </script>
+</body>
+</html>
