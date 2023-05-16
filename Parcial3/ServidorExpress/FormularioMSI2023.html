@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form>
+        <label for="idEquipo">ID Equipo</label>
+        <input id="idEquipo" type="text"><br>
+
+        <label for="idRegion">Region</label>
+        <input id="idRegion" type="text"><br>
+
+        <label for="nombreEquipo">Nombre</label>
+        <input id="nombreEquipo" type="text"><br>
+
+        <label for="acronimo">Acronimo</label>
+        <input id="acronimo" type="text"><br>
+
+        <label for="paisEquipo">País</label>
+        <input id="paisEquipo" type="text"><br>
+
+        <label for="seed">Seed Regional</label>
+        <input id="seed" type="text"><br>
+
+        <button id="btnConsulta" type="button">Consulta</button>
+
+        <script>
+            document.getElementById("btnConsulta").addEventListener("click", function () {
+                let id = prompt("Teclee el ID del Usuario");
+                fetch('http://localhost:8082/msi2023?idEquipo='+id)
+                .then(respuesta => respuesta.json())
+                .then(objetoEquipo => {
+                document.getElementById("idEquipo").value=objetoEquipo[0].idEquipo,
+                document.getElementById("idRegion").value = objetoEquipo[0].idRegion,
+                document.getElementById("nombreEquipo").value = objetoEquipo[0].nombreEquipo,
+                document.getElementById("acronimo").value = objetoEquipo[0].acronimo,
+                document.getElementById("paisEquipo").value = objetoEquipo[0].paisEquipo,
+                document.getElementById("seed").value = objetoEquipo[0].seed;
+            });
+        });
+        </script>
+    </form>
+</body>
+</html>
