@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="FormularioMSI2023.css">
     <title>Document</title>
 </head>
 <body>
@@ -26,10 +27,12 @@
         <label for="seed">Seed Regional</label>
         <input id="seed" type="text"><br>
 
-        <button id="btnConsulta" type="button">Consulta</button>
+        <button id="btnConsultaPorID" type="button">Consultar Equipo Por ID</button>
+        <button id="btnAgregar" type="button">Agregar Equipo</button>
+        <button id="btnBorrar" type="button">Borrar Equipo</button>
 
         <script>
-            document.getElementById("btnConsulta").addEventListener("click", function () {
+            document.getElementById("btnConsultaPorID").addEventListener("click", function () {
                 let id = prompt("Teclee el ID del Usuario");
                 fetch('http://localhost:8082/msi2023?idEquipo='+id)
                 .then(respuesta => respuesta.json())
@@ -42,6 +45,65 @@
                 document.getElementById("seed").value = objetoEquipo[0].seed;
             });
         });
+
+        document.getElementById("btnBorrar").addEventListener("click", function () {
+                let id = prompt("Teclee el ID del Usuario");
+                fetch('http://localhost:8082/msi2023?idEquipo=' + id, {
+                    method: "DELETE"
+                })
+                    .then(respuesta => respuesta.json())
+                    .then(objetoRespuesta => {
+                        if (objetoRespuesta.estado == 1){
+                            alert(objetoRespuesta.resultado);
+                            document.getElementById("idEquipo").value = '';
+                                document.getElementById("idRegion").value = '';
+                                document.getElementById("nombreEquipo").value = '';
+                                document.getElementById("acronimo").value = '';
+                                document.getElementById("paisEquipo").value = '';
+                                document.getElementById("seed").value = '';
+                        }
+                        else{
+                            alert(objetoRespuesta.resultado);
+                        }
+                    });
+            });
+
+            document.getElementById("btnAgregar").addEventListener("click", function () {
+                    let idEquipo = document.getElementById("idEquipo").value;
+                    let idRegion = document.getElementById("idRegion").value;
+                    let nombreEquipo = document.getElementById("nombreEquipo").value;
+                    let acronimo = document.getElementById("acronimo").value;
+                    let paisEquipo = document.getElementById("paisEquipo").value;
+                    let seed = document.getElementById("seed").value;
+
+                    fetch('http://localhost:8082/msi2023', {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            "idEquipo": idEquipo,
+                            "idRegion": idRegion,
+                            "nombreEquipo": nombreEquipo,
+                            "acronimo": acronimo,
+                            "paisEquipo": paisEquipo,
+                            "seed": seed
+                        })
+                    })
+                        .then(respuesta => respuesta.json())
+                        .then(objetoRespuesta => {
+                            if (objetoRespuesta.estado == 1) {
+                                alert(objetoRespuesta.resultado);
+                                document.getElementById("idEquipo").value = '';
+                                document.getElementById("idRegion").value = '';
+                                document.getElementById("nombreEquipo").value = '';
+                                document.getElementById("acronimo").value = '';
+                                document.getElementById("paisEquipo").value = '';
+                                document.getElementById("seed").value = '';
+                            }
+                            else {
+                                alert(objetoRespuesta.resultado);
+                            }
+                        });
+                });
         </script>
     </form>
 </body>
