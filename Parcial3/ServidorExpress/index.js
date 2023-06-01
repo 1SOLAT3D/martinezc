@@ -1,15 +1,15 @@
-const express = require('express');
+import express, { json } from 'express';
 const app = express();
-const mysql = require('mysql');
-const cors = require('cors');
+import { createConnection } from 'mysql';
+import cors from 'cors';
 
-app.use(express.json());
+app.use(json());
 
 app.use(cors());
 
-app.get('/msi2023', (req, res) => {
+app.get('/msi2023/equipo', (req, res) => {
 
-    const connection = mysql.createConnection({
+    const connection = createConnection({
         host: 'localhost',
         user: 'root',
         password: '',
@@ -28,51 +28,55 @@ app.get('/msi2023', (req, res) => {
     connection.end();
 });
 
-app.get('/msi2023/:idEquipo',(req, res)=>{
-    if(typeof(req.params.idEquipo)=== 'undefined'){
-        res.json({mensaje:"Debe enviar el parametro idEquipo en la cadena de consulta"});
+app.get('/msi2023/equipo/:idEquipo', (req, res) => {
+    if (typeof (req.params.idEquipo) === 'undefined') {
+        res.json({ mensaje: "Debe enviar el parametro idEquipo en la cadena de consulta" });
     }
 
-const connection = mysql.createConnection({
-    host : 'localhost',
-    user : 'root',
-    password : '',
-    database : 'msi2023'
-    });
-
-connection.connect();
-connection.query(`SELECT * FROM equipo WHERE idEquipo=${req.params.idEquipo}`, function(error, results, fields){
-    if (error) {
-        res.json(error);
-    }
-    else{
-    res.json(results);
-    }
-   });
-    connection.end();
-});
-
-app.delete('/msi2023/:idEquipo', (req, res) => {
-    if(typeof(req.params.idEquipo)=== 'undefined'){
-        res.json({estado:0, resultado:"Debe enviar el parametro idEquipo en la cadena de consulta"});
-    }
-
-    const connection = mysql.createConnection({
-        host : 'localhost',
-        user : 'root',
-        password : '',
-        database : 'msi2023'
+    const connection = createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'msi2023'
     });
 
     connection.connect();
-    connection.query(`DELETE FROM equipo WHERE idEquipo=${req.params.idEquipo}`, function(error, results, fields){
-        if (results.affectedRows==1) {
-            res.json({estado : 1,
-            resultado: 'Equipo borrado'});
+    connection.query(`SELECT * FROM equipo WHERE idEquipo=${req.params.idEquipo}`, function (error, results, fields) {
+        if (error) {
+            res.json(error);
         }
-        else{
-            res.json({estado : 0,
-            resultado: "Ocurrió un error en la eliminacion"});
+        else {
+            res.json(results);
+        }
+    });
+    connection.end();
+});
+
+app.delete('/msi2023:idEquipo', (req, res) => {
+    if (typeof (req.params.idEquipo) === 'undefined') {
+        res.json({ estado: 0, resultado: "Debe enviar el parametro idEquipo en la cadena de consulta" });
+    }
+
+    const connection = createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'msi2023'
+    });
+
+    connection.connect();
+    connection.query(`DELETE FROM equipo WHERE idEquipo=${req.params.idEquipo}`, function (error, results, fields) {
+        if (results.affectedRows == 1) {
+            res.json({
+                estado: 1,
+                resultado: 'Equipo borrado'
+            });
+        }
+        else {
+            res.json({
+                estado: 0,
+                resultado: "Ocurrió un error en la eliminacion"
+            });
         }
     });
     connection.end();
@@ -80,7 +84,7 @@ app.delete('/msi2023/:idEquipo', (req, res) => {
 
 app.post('/msi2023', (req, res) => {
 
-    const connection = mysql.createConnection({
+    const connection = createConnection({
         host: 'localhost',
         user: 'root',
         password: '',
@@ -101,7 +105,30 @@ app.post('/msi2023', (req, res) => {
     connection.end();
 });
 
-app.listen(8082, (req,res) =>{
+app.put('/msi2023/:idEquipo', (req, res) => {
+
+    const connection = createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'msi2023'
+    });
+
+    connection.connect();
+    let sentenciaSQL = "UPDATE equipo SET idRegion = " + req.body.idRegion + ", nombreEquipo = '" + req.body.nombreEquipo + "', acronimo = '" + req.body.acronimo + "', paisEquipo = '" + req.body.paisEquipo + "', seed = " + req.body.seed + " WHERE idEquipo = " + req.params.idEquipo;
+    console.log(sentenciaSQL);
+    connection.query(sentenciaSQL, function (error, results, fields) {
+        if (error) {
+            res.json(error);
+        }
+        else {
+            res.json(results);
+        }
+    });
+    connection.end();
+});
+
+app.listen(8082, (req, res) => {
     console.log('Servidor Express escuchando en el puerto 8082');
 }
 );
