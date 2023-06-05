@@ -7,9 +7,9 @@ app.use(express.json());
 
 app.use(cors());
 
-app.get('/msi2023/equipo', (req, res) => {
+app.get('/msi2023', (req, res) => {
 
-    const connection = createConnection({
+    const connection = mysql.createConnection({
         host: 'localhost',
         user: 'root',
         password: '',
@@ -28,12 +28,12 @@ app.get('/msi2023/equipo', (req, res) => {
     connection.end();
 });
 
-app.get('/msi2023/equipo/:idEquipo', (req, res) => {
-    if (typeof (req.params.idEquipo) === 'undefined') {
+app.get('/msi2023/:idEquipo', (req, res) => {
+    if (typeof (req.query.idEquipo) === 'undefined') {
         res.json({ mensaje: "Debe enviar el parametro idEquipo en la cadena de consulta" });
     }
 
-    const connection = createConnection({
+    const connection = mysql.createConnection({
         host: 'localhost',
         user: 'root',
         password: '',
@@ -41,7 +41,7 @@ app.get('/msi2023/equipo/:idEquipo', (req, res) => {
     });
 
     connection.connect();
-    connection.query(`SELECT * FROM equipo WHERE idEquipo=${req.params.idEquipo}`, function (error, results, fields) {
+    connection.query(`SELECT * FROM equipo WHERE idEquipo=${req.query.idEquipo}`, function (error, results, fields) {
         if (error) {
             res.json(error);
         }
@@ -52,12 +52,12 @@ app.get('/msi2023/equipo/:idEquipo', (req, res) => {
     connection.end();
 });
 
-app.delete('/msi2023:idEquipo', (req, res) => {
+app.delete('/msi2023/equipo/:idEquipo', (req, res) => {
     if (typeof (req.params.idEquipo) === 'undefined') {
         res.json({ estado: 0, resultado: "Debe enviar el parametro idEquipo en la cadena de consulta" });
     }
 
-    const connection = createConnection({
+    const connection = mysql.createConnection({
         host: 'localhost',
         user: 'root',
         password: '',
@@ -66,13 +66,16 @@ app.delete('/msi2023:idEquipo', (req, res) => {
 
     connection.connect();
     connection.query(`DELETE FROM equipo WHERE idEquipo=${req.params.idEquipo}`, function (error, results, fields) {
+        console.log(results);
         if (results.affectedRows == 1) {
+            
             res.json({
                 estado: 1,
                 resultado: 'Equipo borrado'
             });
         }
         else {
+            
             res.json({
                 estado: 0,
                 resultado: "Ocurrió un error en la eliminacion"
@@ -84,7 +87,7 @@ app.delete('/msi2023:idEquipo', (req, res) => {
 
 app.post('/msi2023', (req, res) => {
 
-    const connection = createConnection({
+    const connection = mysql.createConnection({
         host: 'localhost',
         user: 'root',
         password: '',
@@ -107,7 +110,7 @@ app.post('/msi2023', (req, res) => {
 
 app.put('/msi2023/:idEquipo', (req, res) => {
 
-    const connection = createConnection({
+    const connection = mysql.createConnection({
         host: 'localhost',
         user: 'root',
         password: '',
