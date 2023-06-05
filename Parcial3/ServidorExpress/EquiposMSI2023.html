@@ -59,69 +59,63 @@
         </div>
 
         <script>
-                document.getElementById("btnConsultar").addEventListener("click", function () {
-                        fetch(`http://localhost:8082/msi2023`)
-                            .then(response => response.json())
-                            .then(data => {
-                                document.getElementById("wrapper").innerHTML = '';
-                                new gridjs.Grid({
-                                    columns: ['Nombre del Equipo', 'Acrónimo', 'País del Equipo', 'Seed de Liga'],
-                                    server: {
-                                        url: 'http://localhost:8082/msi2023',
-                                        then: data => data.map(equipo =>
-                                            [equipo.nombreEquipo, equipo.acronimo, equipo.paisEquipo, equipo.seed]
-                                        )
-                                    }
-                                }).render(document.getElementById("wrapper"));
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                            });
-                    });
-
-                document.getElementById("btnConsultaPorID").addEventListener("click", function () {
-                        swal({
-                            title: "Ingresar ID del Usuario",
-                            content: "input",
-                            button: {
-                                text: "Consultar",
-                                closeModal: false,
-                            },
-                        }).then((value) => {
-                            let id = value;
-                            fetch('http://localhost:8082/msi2023?idEquipo=' + id)
-                                .then(respuesta => respuesta.json())
-                                .then(objetoEquipo => {
-                                    if (objetoEquipo[id - 1]) {
-                                        swal.close(); // Cerrar el Sweet Alert
-                                        document.getElementById("idEquipo").value = objetoEquipo[id - 1].idEquipo;
-                                        document.getElementById("idRegion").value = objetoEquipo[id - 1].idRegion;
-                                        document.getElementById("nombreEquipo").value = objetoEquipo[id - 1].nombreEquipo;
-                                        document.getElementById("acronimo").value = objetoEquipo[id - 1].acronimo;
-                                        document.getElementById("paisEquipo").value = objetoEquipo[id - 1].paisEquipo;
-                                        document.getElementById("seed").value = objetoEquipo[id - 1].seed;
-
-                                        document.getElementById("wrapper").innerHTML = '';
-                                        new gridjs.Grid({
-                                            columns: ['Nombre del Equipo', 'Acrónimo', 'País del Equipo', 'Seed de Liga'],
-                                            data: [[
-                                                objetoEquipo[id - 1].nombreEquipo,
-                                                objetoEquipo[id - 1].acronimo,
-                                                objetoEquipo[id - 1].paisEquipo,
-                                                objetoEquipo[id - 1].seed
-                                            ]],
-                                        }).render(document.getElementById("wrapper"));
-                                    } else {
-                                        swal("Error", "ID no válido", "error");
-                                    }
+                    document.getElementById("btnConsultar").addEventListener("click", function () {
+                            fetch(`http://localhost:8082/msi2023`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    document.getElementById("wrapper").innerHTML = '';
+                                    new gridjs.Grid({
+                                        columns: ['Nombre del Equipo', 'Acrónimo', 'País del Equipo', 'Seed de Liga'],
+                                        server: {
+                                            url: 'http://localhost:8082/msi2023',
+                                            then: data => data.map(equipo =>
+                                                [equipo.nombreEquipo, equipo.acronimo, equipo.paisEquipo, equipo.seed]
+                                            )
+                                        }
+                                    }).render(document.getElementById("wrapper"));
                                 })
-                                .catch(error => {
-                                    swal("Error", "Ocurrió un error en la solicitud", "error");
-                                });
                         });
-                    });
 
-                    document.getElementById("btnBorrar").addEventListener("click", function () {
+                        document.getElementById("btnConsultaPorID").addEventListener("click", function () {
+                                swal({
+                                    title: "Ingresar ID del Usuario",
+                                    content: "input",
+                                    button: {
+                                        text: "Consultar",
+                                        closeModal: false,
+                                    },
+                                }).then((value) => {
+                                    let id = Number(value);
+                                    fetch('http://localhost:8082/msi2023?idEquipo=' + id)
+                                        .then(respuesta => respuesta.json())
+                                        .then(objetoEquipo => {
+                                            const equipo = objetoEquipo.find(item => item.idEquipo === id);
+                                            if (equipo) {
+                                                swal.close();
+                                                document.getElementById("wrapper").innerHTML = '';
+                                                document.getElementById("idEquipo").value = equipo.idEquipo;
+                                                document.getElementById("idRegion").value = equipo.idRegion;
+                                                document.getElementById("nombreEquipo").value = equipo.nombreEquipo;
+                                                document.getElementById("acronimo").value = equipo.acronimo;
+                                                document.getElementById("paisEquipo").value = equipo.paisEquipo;
+                                                document.getElementById("seed").value = equipo.seed;
+                                                new gridjs.Grid({
+                                                    columns: ['Nombre del Equipo', 'Acrónimo', 'País del Equipo', 'Seed de Liga'],
+                                                    data: [[
+                                                        equipo.nombreEquipo,
+                                                        equipo.acronimo,
+                                                        equipo.paisEquipo,
+                                                        equipo.seed
+                                                    ]],
+                                                }).render(document.getElementById("wrapper"));
+                                            } else {
+                                                swal("Error", "ID no válido", "error");
+                                            }
+                                        });
+                                });
+                            });
+
+                        document.getElementById("btnBorrar").addEventListener("click", function () {
                             let id = document.getElementById("idEquipo").value;
                             fetch('http://localhost:8082/msi2023/equipo/' + id, {
                                 method: "DELETE"
@@ -140,17 +134,7 @@
                                             document.getElementById("acronimo").value = '';
                                             document.getElementById("paisEquipo").value = '';
                                             document.getElementById("seed").value = '';
-
-                                            document.getElementById("wrapper").innerHTML = '';
-                                            new gridjs.Grid({
-                                                columns: ['Nombre del Equipo', 'Acrónimo', 'País del Equipo', 'Seed de Liga'],
-                                                server: {
-                                                    url: 'http://localhost:8082/msi2023',
-                                                    then: data => data.map(equipo =>
-                                                        [equipo.nombreEquipo, equipo.acronimo, equipo.paisEquipo, equipo.seed]
-                                                    )
-                                                }
-                                            }).render(document.getElementById("wrapper"));
+                                            window.location.reload();
                                         });
                                     }
                                     else {
@@ -163,7 +147,64 @@
                                 });
                         });
 
-                    document.getElementById("btnAgregar").addEventListener("click", function () {
+                        document.getElementById("btnAgregar").addEventListener("click", function () {
+                                let idEquipo = document.getElementById("idEquipo").value;
+                                let idRegion = document.getElementById("idRegion").value;
+                                let nombreEquipo = document.getElementById("nombreEquipo").value;
+                                let acronimo = document.getElementById("acronimo").value;
+                                let paisEquipo = document.getElementById("paisEquipo").value;
+                                let seed = document.getElementById("seed").value;
+
+                                if (idEquipo === '' || idRegion === '' || nombreEquipo === '' || acronimo === '' || paisEquipo === '' || seed === '') {
+                                    swal("Favor de llenar todos los campos", "", "error");
+                                } else {
+                                    fetch('http://localhost:8082/msi2023', {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify({
+                                            "idEquipo": idEquipo,
+                                            "idRegion": idRegion,
+                                            "nombreEquipo": nombreEquipo,
+                                            "acronimo": acronimo,
+                                            "paisEquipo": paisEquipo,
+                                            "seed": seed
+                                        })
+                                    })
+                                        .then(respuesta => respuesta.json())
+                                        .then(objetoRespuesta => {
+                                            if (objetoRespuesta.estado == 1) {
+                                                document.getElementById("idEquipo").value = '';
+                                                document.getElementById("idRegion").value = '';
+                                                document.getElementById("nombreEquipo").value = '';
+                                                document.getElementById("acronimo").value = '';
+                                                document.getElementById("paisEquipo").value = '';
+                                                document.getElementById("seed").value = '';
+                                                document.getElementById("wrapper").innerHTML = '';
+                                                new gridjs.Grid({
+                                                    columns: ['Nombre del Equipo', 'Acrónimo', 'País del Equipo', 'Seed de Liga'],
+                                                    server: {
+                                                        url: 'http://localhost:8082/msi2023',
+                                                        then: data => data.map(equipo =>
+                                                            [equipo.nombreEquipo, equipo.acronimo, equipo.paisEquipo, equipo.seed]
+                                                        )
+                                                    }
+                                                }).render(document.getElementById("wrapper"));
+
+                                                swal({
+                                                    title: "Equipo agregado",
+                                                    text: "",
+                                                    icon: "success"
+                                                }).then(() => {
+                                                    location.reload();
+                                                });
+                                            }
+                                        });
+                                }
+                            });
+
+                        document.getElementById("btnModificar").addEventListener("click", function () {
                             let idEquipo = document.getElementById("idEquipo").value;
                             let idRegion = document.getElementById("idRegion").value;
                             let nombreEquipo = document.getElementById("nombreEquipo").value;
@@ -171,91 +212,44 @@
                             let paisEquipo = document.getElementById("paisEquipo").value;
                             let seed = document.getElementById("seed").value;
 
-                            if (idEquipo === '' || idRegion === '' || nombreEquipo === '' || acronimo === '' || paisEquipo === '' || seed === '') {
-                                swal("Favor de llenar todos los campos", "", "error");
-                            } else {
-                                fetch('http://localhost:8082/msi2023', {
-                                    method: "POST",
-                                    headers: {
-                                        "Content-Type": "application/json"
-                                    },
-                                    body: JSON.stringify({
-                                        "idEquipo": idEquipo,
-                                        "idRegion": idRegion,
-                                        "nombreEquipo": nombreEquipo,
-                                        "acronimo": acronimo,
-                                        "paisEquipo": paisEquipo,
-                                        "seed": seed
-                                    })
+                            fetch(`http://localhost:8082/msi2023/${idEquipo}`, {
+                                method: "PUT",
+                                body: JSON.stringify({
+                                    "idEquipo": idEquipo,
+                                    "idRegion": idRegion,
+                                    "nombreEquipo": nombreEquipo,
+                                    "acronimo": acronimo,
+                                    "paisEquipo": paisEquipo,
+                                    "seed": seed
+                                }),
+                                headers: { "Content-Type": "application/json" }
+                            })
+                                .then((response) => {
+                                    if (!response.ok) {
+                                        swal("No se puede modificar el registro", "", "error");
+                                    }
+                                    else{
+                                        swal("Equipo modificado", "", "sucess");
+                                    }
+                                    console.log(response);
+                                    return response.json();
                                 })
-                                    .then(respuesta => respuesta.json())
-                                    .then(objetoRespuesta => {
-                                        if (objetoRespuesta.estado == 1) {
-                                            document.getElementById("idEquipo").value = '';
-                                            document.getElementById("idRegion").value = '';
-                                            document.getElementById("nombreEquipo").value = '';
-                                            document.getElementById("acronimo").value = '';
-                                            document.getElementById("paisEquipo").value = '';
-                                            document.getElementById("seed").value = '';
-                                            document.getElementById("wrapper").innerHTML = '';
-                                            new gridjs.Grid({
-                                                columns: ['Nombre del Equipo', 'Acrónimo', 'País del Equipo', 'Seed de Liga'],
-                                                server: {
-                                                    url: 'http://localhost:8082/msi2023',
-                                                    then: data => data.map(equipo =>
-                                                        [equipo.nombreEquipo, equipo.acronimo, equipo.paisEquipo, equipo.seed]
-                                                    )
-                                                }
-                                            }).render(document.getElementById("wrapper"));
-                                            swal("Equipo Agregado Con Éxito", "", "success");
-                                        }
-                                    });
-                            }
+                                .then((data) => {
+                                    console.log(data);
+                                })
+                                .catch((error) => {
+                                    console.error(error);
+                                });
                         });
 
-                    document.getElementById("btnModificar").addEventListener("click", function () {
-                        let idEquipo = document.getElementById("idEquipo").value;
-                        let idRegion = document.getElementById("idRegion").value;
-                        let nombreEquipo = document.getElementById("nombreEquipo").value;
-                        let acronimo = document.getElementById("acronimo").value;
-                        let paisEquipo = document.getElementById("paisEquipo").value;
-                        let seed = document.getElementById("seed").value;
-
-                        fetch(`http://localhost:8082/msi2023/${idEquipo}`, {
-                            method: "PUT",
-                            body: JSON.stringify({
-                                "idEquipo": idEquipo,
-                                "idRegion": idRegion,
-                                "nombreEquipo": nombreEquipo,
-                                "acronimo": acronimo,
-                                "paisEquipo": paisEquipo,
-                                "seed": seed
-                            }),
-                            headers: { "Content-Type": "application/json" }
-                        })
-                            .then((response) => {
-                                if (!response.ok) {
-                                    swal("No se puede modificar el registro", "", "error");
-                                }
-                                console.log(response);
-                                return response.json();
-                            })
-                            .then((data) => {
-                                console.log(data);
-                            })
-                            .catch((error) => {
-                                console.error(error);
+                        document.getElementById("btnLimpiar").addEventListener("click", function () {
+                            const inputs = document.querySelectorAll('input');
+                            inputs.forEach(input => {
+                                document.getElementById("wrapper").innerHTML = '';
+                                input.value = '';
+                                window.location.reload();
                             });
-                    });
-
-                    document.getElementById("btnLimpiar").addEventListener("click", function () {
-                        const inputs = document.querySelectorAll('input');
-                        inputs.forEach(input => {
-                            document.getElementById("wrapper").innerHTML = '';
-                            input.value = '';
-                        });
-                    });
-                               
+                        });            
         </script>
     </form>
 </body>
