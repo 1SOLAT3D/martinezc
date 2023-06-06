@@ -46,210 +46,226 @@
                 <input id="seed" type="text" class="form-control">
             </div>
 
-            <button id="btnConsultaPorID" type="button" class="btn btn-primary">Consultar Equipo Por ID</button>
-            <button id="btnConsultar" type="button" class="btn btn-primary">Mostrar Datos</button>
-            <button id="btnAgregar" type="button" class="btn btn-success">Agregar Equipo</button>
-            <button id="btnBorrar" type="button" class="btn btn-danger">Borrar Equipo</button>
-            <button id="btnModificar" type="button" class="btn btn-success">Modificar Equipo</button>
-            <button id="btnLimpiar" type="button" class="btn btn-success">Limpiar</button>
+            <div class="container mt-4 shadow-lg p-3 mb-5 bg-body rounded">
+                <table class="table table-bordered table-striped">
+                    Vacantes
+                    <thead>
+                        <tr>
+                            <th>Equipo</th>
+                            <th>Region</th>
+                            <th>Nombre del Equipo</th>
+                            <th>Acronimo</th>
+                            <th>País</th>
+                            <th>Puesto en Liga</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data">
+                    </tbody>
+                </table>
+            </div>
 
-            <div id="wrapper"></div>
-            <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
-
+            <button onclick="obtenerDatoPorID()" id="btnConsultaPorID" type="button" class="btn btn-primary">Consultar Equipo Por ID</button>
+            <button onclick="obtenerTotalDatos()" id="btnConsultar" type="button" class="btn btn-primary">Mostrar Datos</button>
+            <button onclick="agregarEquipo()" id="btnAgregar" type="button" class="btn btn-success">Agregar Equipo</button>
+            <button onclick="eliminarEquipo()" id="btnBorrar" type="button" class="btn btn-danger">Borrar Equipo</button>
+            <button onclick="actualizarEquipo()" id="btnModificar" type="button" class="btn btn-success">Modificar Equipo</button>
+            <button onclick="limpiarInputs()" id="btnLimpiar" type="button" class="btn btn-success">Limpiar</button>
         </div>
 
         <script>
-                    document.getElementById("btnConsultar").addEventListener("click", function () {
-                            fetch(`http://localhost:8082/msi2023`)
-                                .then(response => response.json())
-                                .then(data => {
-                                    document.getElementById("wrapper").innerHTML = '';
-                                    new gridjs.Grid({
-                                        columns: ['Nombre del Equipo', 'Acrónimo', 'País del Equipo', 'Seed de Liga'],
-                                        server: {
-                                            url: 'http://localhost:8082/msi2023',
-                                            then: data => data.map(equipo =>
-                                                [equipo.nombreEquipo, equipo.acronimo, equipo.paisEquipo, equipo.seed]
-                                            )
-                                        }
-                                    }).render(document.getElementById("wrapper"));
-                                })
+            const dataContenedor = document.getElementById('data');
+                const obtenerTotalDatos = () => {
+                    fetch(`http://localhost:8082/msi2023`)
+                        .then(response => response.json())
+                        .then(data => {
+                            mostrarDatos(data);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            dataContenedor.innerHTML = 'Ha ocurrido un error al obtener los datos.';
                         });
+                };
+                const mostrarDatos = (data) => {
+                    console.log(data);
+                    let body = "";
+                    for (let i = 0; i < data.length; i++) {
+                        body += `<tr>
+                                  <td>${data[i].idEquipo}</td>
+                                  <td>${data[i].idRegion}</td>
+                                  <td>${data[i].nombreEquipo}</td>
+                                  <td>${data[i].acronimo}</td>
+                                  <td>${data[i].paisEquipo}</td>
+                                  <td>${data[i].seed}</td>
+                              </tr>`;
+                    }
+                    dataContenedor.innerHTML = `<table>${body}</table>`;
+                };
+            </script>
+        
+        <script>
+            const dataContainer = document.getElementById('data');
 
-                        document.getElementById("btnConsultaPorID").addEventListener("click", function () {
-                                swal({
-                                    title: "Ingresar ID del Usuario",
-                                    content: "input",
-                                    button: {
-                                        text: "Consultar",
-                                        closeModal: false,
-                                    },
-                                }).then((value) => {
-                                    let id = Number(value);
-                                    fetch('http://localhost:8082/msi2023?idEquipo=' + id)
-                                        .then(respuesta => respuesta.json())
-                                        .then(objetoEquipo => {
-                                            const equipo = objetoEquipo.find(item => item.idEquipo === id);
-                                            if (equipo) {
-                                                swal.close();
-                                                document.getElementById("wrapper").innerHTML = '';
-                                                document.getElementById("idEquipo").value = equipo.idEquipo;
-                                                document.getElementById("idRegion").value = equipo.idRegion;
-                                                document.getElementById("nombreEquipo").value = equipo.nombreEquipo;
-                                                document.getElementById("acronimo").value = equipo.acronimo;
-                                                document.getElementById("paisEquipo").value = equipo.paisEquipo;
-                                                document.getElementById("seed").value = equipo.seed;
-                                                new gridjs.Grid({
-                                                    columns: ['Nombre del Equipo', 'Acrónimo', 'País del Equipo', 'Seed de Liga'],
-                                                    data: [[
-                                                        equipo.nombreEquipo,
-                                                        equipo.acronimo,
-                                                        equipo.paisEquipo,
-                                                        equipo.seed
-                                                    ]],
-                                                }).render(document.getElementById("wrapper"));
-                                            } else {
-                                                swal("Error", "ID no válido", "error");
-                                            }
-                                        });
-                                });
-                            });
-
-                        document.getElementById("btnBorrar").addEventListener("click", function () {
-                            let id = document.getElementById("idEquipo").value;
-                            fetch('http://localhost:8082/msi2023/equipo/' + id, {
-                                method: "DELETE"
-                            })
-                                .then(respuesta => respuesta.json())
-                                .then(objetoRespuesta => {
-                                    if (objetoRespuesta.estado == 1) {
-                                        swal({
-                                            title: "Éxito",
-                                            text: objetoRespuesta.resultado,
-                                            icon: "success"
-                                        }).then(() => {
-                                            document.getElementById("idEquipo").value = '';
-                                            document.getElementById("idRegion").value = '';
-                                            document.getElementById("nombreEquipo").value = '';
-                                            document.getElementById("acronimo").value = '';
-                                            document.getElementById("paisEquipo").value = '';
-                                            document.getElementById("seed").value = '';
-                                            window.location.reload();
-                                        });
-                                    }
-                                    else {
-                                        swal({
-                                            title: "Error",
-                                            text: objetoRespuesta.resultado,
-                                            icon: "error"
-                                        });
-                                    }
-                                });
-                        });
-
-                        document.getElementById("btnAgregar").addEventListener("click", function () {
-                                let idEquipo = document.getElementById("idEquipo").value;
-                                let idRegion = document.getElementById("idRegion").value;
-                                let nombreEquipo = document.getElementById("nombreEquipo").value;
-                                let acronimo = document.getElementById("acronimo").value;
-                                let paisEquipo = document.getElementById("paisEquipo").value;
-                                let seed = document.getElementById("seed").value;
-
-                                if (idEquipo === '' || idRegion === '' || nombreEquipo === '' || acronimo === '' || paisEquipo === '' || seed === '') {
-                                    swal("Favor de llenar todos los campos", "", "error");
+                const obtenerDatoPorID = () => {
+                    swal({
+                        title: "Ingresar ID del Usuario",
+                        content: "input",
+                        button: {
+                            text: "Consultar",
+                            closeModal: false,
+                        },
+                    }).then((value) => {
+                        let id = Number(value);
+                        fetch('http://localhost:8082/msi2023?idEquipo=' + id)
+                            .then(respuesta => respuesta.json())
+                            .then(objetoEquipo => {
+                                const equipo = objetoEquipo.find(item => item.idEquipo === id);
+                                if (equipo) {
+                                    swal.close();
+                                    mostrarData(equipo);
                                 } else {
-                                    fetch('http://localhost:8082/msi2023', {
-                                        method: "POST",
-                                        headers: {
-                                            "Content-Type": "application/json"
-                                        },
-                                        body: JSON.stringify({
-                                            "idEquipo": idEquipo,
-                                            "idRegion": idRegion,
-                                            "nombreEquipo": nombreEquipo,
-                                            "acronimo": acronimo,
-                                            "paisEquipo": paisEquipo,
-                                            "seed": seed
-                                        })
-                                    })
-                                        .then(respuesta => respuesta.json())
-                                        .then(objetoRespuesta => {
-                                            if (objetoRespuesta.estado == 1) {
-                                                document.getElementById("idEquipo").value = '';
-                                                document.getElementById("idRegion").value = '';
-                                                document.getElementById("nombreEquipo").value = '';
-                                                document.getElementById("acronimo").value = '';
-                                                document.getElementById("paisEquipo").value = '';
-                                                document.getElementById("seed").value = '';
-                                                document.getElementById("wrapper").innerHTML = '';
-                                                new gridjs.Grid({
-                                                    columns: ['Nombre del Equipo', 'Acrónimo', 'País del Equipo', 'Seed de Liga'],
-                                                    server: {
-                                                        url: 'http://localhost:8082/msi2023',
-                                                        then: data => data.map(equipo =>
-                                                            [equipo.nombreEquipo, equipo.acronimo, equipo.paisEquipo, equipo.seed]
-                                                        )
-                                                    }
-                                                }).render(document.getElementById("wrapper"));
-
-                                                swal({
-                                                    title: "Equipo agregado",
-                                                    text: "",
-                                                    icon: "success"
-                                                }).then(() => {
-                                                    location.reload();
-                                                });
-                                            }
-                                        });
+                                    swal("Error", "ID no válido", "error");
                                 }
                             });
+                    });
+                };
 
-                        document.getElementById("btnModificar").addEventListener("click", function () {
-                            let idEquipo = document.getElementById("idEquipo").value;
-                            let idRegion = document.getElementById("idRegion").value;
-                            let nombreEquipo = document.getElementById("nombreEquipo").value;
-                            let acronimo = document.getElementById("acronimo").value;
-                            let paisEquipo = document.getElementById("paisEquipo").value;
-                            let seed = document.getElementById("seed").value;
+                const mostrarData = (data) => {
+                    let body = "";
+                    const idEquipo = data && data.idEquipo ? data.idEquipo : '';
+                    const idRegion = data && data.idRegion ? data.idRegion : '';
+                    const nombreEquipo = data && data.nombreEquipo ? data.nombreEquipo : '';
+                    const acronimo = data && data.acronimo ? data.acronimo : '';
+                    const paisEquipo = data && data.paisEquipo ? data.paisEquipo : '';
+                    const seed = data && data.seed ? data.seed : '';
 
-                            fetch(`http://localhost:8082/msi2023/${idEquipo}`, {
-                                method: "PUT",
-                                body: JSON.stringify({
-                                    "idEquipo": idEquipo,
-                                    "idRegion": idRegion,
-                                    "nombreEquipo": nombreEquipo,
-                                    "acronimo": acronimo,
-                                    "paisEquipo": paisEquipo,
-                                    "seed": seed
-                                }),
-                                headers: { "Content-Type": "application/json" }
-                            })
-                                .then((response) => {
-                                    if (!response.ok) {
-                                        swal("No se puede modificar el registro", "", "error");
-                                    }
-                                    else{
-                                        swal("Equipo modificado", "", "sucess");
-                                    }
-                                    console.log(response);
-                                    return response.json();
-                                })
-                                .then((data) => {
-                                    console.log(data);
-                                })
-                                .catch((error) => {
-                                    console.error(error);
-                                });
-                        });
+                    body += `<tr>
+              <td>${idEquipo}</td>
+              <td>${idRegion}</td>
+              <td>${nombreEquipo}</td>
+              <td>${acronimo}</td>
+              <td>${paisEquipo}</td>
+              <td>${seed}</td>
+          </tr>`;
+                    dataContainer.innerHTML = `<table>${body}</table>`;
+                };
 
-                        document.getElementById("btnLimpiar").addEventListener("click", function () {
-                            const inputs = document.querySelectorAll('input');
-                            inputs.forEach(input => {
-                                document.getElementById("wrapper").innerHTML = '';
-                                input.value = '';
-                                window.location.reload();
+            const eliminarEquipo = () => {
+                    let id = document.getElementById("idEquipo").value;
+                fetch('http://localhost:8082/msi2023/equipo/' + id, {
+                    method: "DELETE"
+                })
+                    .then(respuesta => respuesta.json())
+                    .then(objetoRespuesta => {
+                        if (objetoRespuesta.estado == 1) {
+                            swal({
+                                title: "Éxito",
+                                text: "Se borró el equipo con el ID " + id,
+                                icon: "success"
+                            }).then(() => {
+                                document.getElementById("idEquipo").value = '';
+                                document.getElementById("idRegion").value = '';
+                                document.getElementById("nombreEquipo").value = '';
+                                document.getElementById("acronimo").value = '';
+                                document.getElementById("paisEquipo").value = '';
+                                document.getElementById("seed").value = '';
+                                obtenerTotalDatos();
                             });
-                        });            
+                        }
+                        else {
+                            swal({
+                                title: "Error",
+                                text: "El ID del Equipo ingresado, no existe",
+                                icon: "error"
+                            });
+                        }
+                    });
+                };
+
+            const agregarEquipo = () => {
+                let idEquipo = document.getElementById("idEquipo").value;
+                let idRegion = document.getElementById("idRegion").value;
+                let nombreEquipo = document.getElementById("nombreEquipo").value;
+                let acronimo = document.getElementById("acronimo").value;
+                let paisEquipo = document.getElementById("paisEquipo").value;
+                let seed = document.getElementById("seed").value;
+
+                if (idEquipo === '' || idRegion === '' || nombreEquipo === '' || acronimo === '' || paisEquipo === '' || seed === '') {
+                    swal("Favor de llenar todos los campos", "", "error");
+                } else {
+                    fetch('http://localhost:8082/msi2023', {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            "idEquipo": idEquipo,
+                            "idRegion": idRegion,
+                            "nombreEquipo": nombreEquipo,
+                            "acronimo": acronimo,
+                            "paisEquipo": paisEquipo,
+                            "seed": seed
+                        })
+                    })
+                        .then(respuesta => respuesta.json())
+                        .then(objetoRespuesta => {
+                            if (objetoRespuesta.estado == 1) {
+                                document.getElementById("idEquipo").value = '';
+                                document.getElementById("idRegion").value = '';
+                                document.getElementById("nombreEquipo").value = '';
+                                document.getElementById("acronimo").value = '';
+                                document.getElementById("paisEquipo").value = '';
+                                document.getElementById("seed").value = '';
+                                swal({
+                                    title: "Equipo agregado",
+                                    text: "",
+                                    icon: "success"
+                                })
+                            }
+                        });
+                }
+            };
+
+            const actualizarEquipo = () => {
+                    let idEquipo = document.getElementById("idEquipo").value;
+                    let idRegion = document.getElementById("idRegion").value;
+                    let nombreEquipo = document.getElementById("nombreEquipo").value;
+                    let acronimo = document.getElementById("acronimo").value;
+                    let paisEquipo = document.getElementById("paisEquipo").value;
+                    let seed = document.getElementById("seed").value;
+
+                    if (!idEquipo || !idRegion || !nombreEquipo || !acronimo || !paisEquipo || !seed) {
+                        swal('Por favor, complete todos los campos.');
+                        return;
+                    }
+
+                    fetch(`http://localhost:8082/msi2023/${idEquipo}`, {
+                        method: "PUT",
+                        body: JSON.stringify({
+                            "idEquipo": idEquipo,
+                            "idRegion": idRegion,
+                            "nombreEquipo": nombreEquipo,
+                            "acronimo": acronimo,
+                            "paisEquipo": paisEquipo,
+                            "seed": seed
+                        }),
+                        headers: { "Content-Type": "application/json" }
+                    })
+                        .then((response) => response.json())
+                        .then((data) => {
+                            swal(`Se actualizó correctamente el equipo con id ${idEquipo}.`);
+                            obtenerTotalDatos();
+                        })
+                        .catch((error) => {
+                            swal('Ha ocurrido un error al actualizar el equipo.');
+                        });
+                };
+
+            const limpiarInputs = () => {
+                const inputs = document.querySelectorAll('input');
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+            };            
         </script>
     </form>
 </body>
